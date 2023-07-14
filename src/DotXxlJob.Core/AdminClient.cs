@@ -17,18 +17,18 @@ namespace DotXxlJob.Core
 {
     public class AdminClient
     {
-     
-        private readonly XxlJobExecutorOptions _options; 
+
+        private readonly XxlJobExecutorOptions _options;
         private readonly ILogger<AdminClient> _logger;
         private List<AddressEntry> _addresses;
         private int _currentIndex;
         private static readonly string MAPPING = "/api";
-        public AdminClient(IOptions<XxlJobExecutorOptions> optionsAccessor          
+        public AdminClient(IOptions<XxlJobExecutorOptions> optionsAccessor
             , ILogger<AdminClient> logger)
         {
             Preconditions.CheckNotNull(optionsAccessor?.Value, "XxlJobExecutorOptions");
 
-            this._options = optionsAccessor?.Value;        
+            this._options = optionsAccessor?.Value;
             this._logger = logger;
             InitAddress();
         }
@@ -39,8 +39,8 @@ namespace DotXxlJob.Core
             foreach (var item in this._options.AdminAddresses.Split(';'))
             {
                 try
-                {                 
-                    var entry = new AddressEntry { RequestUri = item+ MAPPING };
+                {
+                    var entry = new AddressEntry { RequestUri = item + MAPPING };
                     this._addresses.Add(entry);
                 }
                 catch (Exception ex)
@@ -52,7 +52,7 @@ namespace DotXxlJob.Core
 
         public Task<ReturnT> Callback(List<HandleCallbackParam> callbackParamList)
         {
-            
+
             return InvokeRpcService("callback", callbackParamList);
         }
 
@@ -63,7 +63,7 @@ namespace DotXxlJob.Core
 
         public Task<ReturnT> RegistryRemove(RegistryParam registryParam)
         {
-            return InvokeRpcService("registryRemove",  registryParam);
+            return InvokeRpcService("registryRemove", registryParam);
         }
 
 
@@ -89,6 +89,10 @@ namespace DotXxlJob.Core
 
                     //.ReceiveJson<ReturnT>();
                     ret = JsonConvert.DeserializeObject<ReturnT>(json);
+                    if (ret.Code != 200)
+                    {
+                        this._logger.LogWarning("request admin error.{0}", json);
+                    }
                     address.Reset();
                 }
                 catch (Exception ex)
@@ -97,8 +101,8 @@ namespace DotXxlJob.Core
                     address.SetFail();
                     continue;
                 }
-            }            
-            if(ret == null)
+            }
+            if (ret == null)
             {
                 ret = ReturnT.Failed("call admin fail");
             }
