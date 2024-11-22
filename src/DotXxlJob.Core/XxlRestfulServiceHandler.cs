@@ -57,7 +57,7 @@ namespace DotXxlJob.Core
                 }
                 if(this._options.AccessToken != reqToken)
                 {
-                    ret = ReturnT.Failed("ACCESS-TOKEN Auth Fail");
+                    ret = ReturnT.Failed("Xxl Job ACCESS-TOKEN Auth Fail");
                     response.ContentType = "application/json;charset=utf-8";
                     await response.WriteAsync(JsonConvert.SerializeObject(ret));
                     return;
