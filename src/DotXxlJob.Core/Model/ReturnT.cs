@@ -28,8 +28,10 @@ namespace DotXxlJob.Core
         
         [DataMember(Name = "content",Order = 3)]
         public object Content { get; set; }
-        
-      
+        [DataMember(Name = "data", Order = 4)]
+        public object Data { get; set; }
+
+
 
         public static ReturnT Failed(string msg)
         {

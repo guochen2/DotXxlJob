@@ -38,16 +38,16 @@ namespace DotXxlJob.Core
 
         }
 
-        public async Task HandlerAsync(HttpRequest request,HttpResponse response)
+        public async Task HandlerAsync(HttpRequest request, HttpResponse response)
         {
-           
 
-            var path = request.Path.Value ;
+
+            var path = request.Path.Value;
 
             ReturnT ret = null;
             var arrParts = path.Split('/');
             var method = arrParts[arrParts.Length - 1].ToLower();
-                     
+
             if (!string.IsNullOrEmpty(this._options.AccessToken))
             {
                 var reqToken = "";
@@ -55,7 +55,7 @@ namespace DotXxlJob.Core
                 {
                     reqToken = tokenValues[0].ToString();
                 }
-                if(this._options.AccessToken != reqToken)
+                if (this._options.AccessToken != reqToken)
                 {
                     ret = ReturnT.Failed("Xxl Job ACCESS-TOKEN Auth Fail");
                     response.ContentType = "application/json;charset=utf-8";
@@ -85,19 +85,23 @@ namespace DotXxlJob.Core
                         break;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                this._logger.LogError(ex,"响应出错"+ ex.Message);
+                this._logger.LogError(ex, "响应出错" + ex.Message);
                 ret = ReturnT.Failed("执行器内部错误");
             }
-           
-          
-            if(ret == null)
+
+
+            if (ret == null)
             {
                 ret = ReturnT.Failed($"method {method}  is not impl");
             }
+            //v3.3.0 规范修改
+            ret.Data = ret.Content;
             response.ContentType = "application/json;charset=utf-8";
-            await response.WriteAsync(JsonConvert.SerializeObject(ret, new JsonSerializerSettings() { StringEscapeHandling = StringEscapeHandling.EscapeNonAscii }));           
+            var res = JsonConvert.SerializeObject(ret, new JsonSerializerSettings() { StringEscapeHandling = StringEscapeHandling.EscapeNonAscii });
+            //this._logger.LogWarning(res);
+            await response.WriteAsync(res);
         }
         private async Task<string> CollectBody(Stream body)
         {
@@ -106,7 +110,7 @@ namespace DotXxlJob.Core
             {
                 bodyText = await reader.ReadToEndAsync();
             }
-            return bodyText??string.Empty;
+            return bodyText ?? string.Empty;
         }
 
         #region rpc service
@@ -118,7 +122,7 @@ namespace DotXxlJob.Core
 
         private ReturnT IdleBeat(IdleBeatRequest req)
         {
-            if(req == null)
+            if (req == null)
             {
                 return ReturnT.Failed("IdleBeat Error");
             }
@@ -148,7 +152,7 @@ namespace DotXxlJob.Core
                 return ReturnT.Failed("Log Error");
             }
             var ret = ReturnT.Success(null);
-            ret.Content = this._jobLogger.ReadLog(req.LogDateTime,req.LogId, req.FromLineNum);
+            ret.Content = this._jobLogger.ReadLog(req.LogDateTime, req.LogId, req.FromLineNum);
             return ret;
         }
 
