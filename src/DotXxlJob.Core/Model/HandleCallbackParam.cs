@@ -1,4 +1,5 @@
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace DotXxlJob.Core.Model
 {
@@ -20,8 +21,12 @@ namespace DotXxlJob.Core.Model
         public int CallbackRetryTimes { get; set; }
         
         [DataMember(Name = "logId",Order = 1)]
+        [JsonProperty("logId")]
+        [System.Text.Json.Serialization.JsonPropertyName("logId")]
         public long LogId { get; set; }
         [DataMember(Name = "logDateTim",Order = 2)]
+        [JsonProperty("logDateTim")]
+        [System.Text.Json.Serialization.JsonPropertyName("logDateTim")]
         public long LogDateTime { get; set; }
 
 
@@ -29,12 +34,16 @@ namespace DotXxlJob.Core.Model
         /// 2.3.0以前版本
         /// </summary>
         [DataMember(Name = "executeResult",Order = 3)]
+        [JsonProperty("executeResult")]
+        [System.Text.Json.Serialization.JsonPropertyName("executeResult")]
         public ReturnT ExecuteResult { get; set; }
 
         /// <summary>
         /// 2.3.0版本使用的参数
         /// </summary>
         [DataMember(Name = "handleCode", Order = 4)]
+        [JsonProperty("handleCode")]
+        [System.Text.Json.Serialization.JsonPropertyName("handleCode")]
         public int HandleCode { 
             get {
                 if(this.ExecuteResult != null)
@@ -49,6 +58,8 @@ namespace DotXxlJob.Core.Model
         /// 2.3.0版本使用的参数
         /// </summary>
         [DataMember(Name = "handleMsg", Order = 5)]
+        [JsonProperty("handleMsg")]
+        [System.Text.Json.Serialization.JsonPropertyName("handleMsg")]
         public string HandleMsg {
             get {
                 return this.ExecuteResult?.Msg;
